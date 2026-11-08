@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>About Us & Global Chat - NEXUS Platform</title>
+
+   <!-- Font Awesome CDN -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+   
+   <!-- SweetAlert2 CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+   <!-- Custom CSS -->
+   <link rel="stylesheet" href="css/style.css">
+
+   <style>
+      :root {
+         --purple-dark: #4c1d95;
+         --purple-main: #6d28d9;
+         --purple-light: #8b5cf6;
+         --purple-soft: #a855f7;
+         --purple-bg: #f3e8ff;
+         --purple-card: #faf5ff;
+         --white: #ffffff;
+         --text-dark: #2e1065;
+         --text-sub: #5b21b6;
+      }
+
+      /* Base Styling */
+      body {
+         background-color: var(--purple-bg) !important;
+         color: var(--text-dark);
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         font-size: 17px;
+      }
+
+      /* 🖼️ top section: sticker (left) & notification (right) */
+      .top-dashboard-grid {
+         max-width: 1200px;
+         margin: 2rem auto;
+         padding: 0 1.5rem;
+         display: grid;
+         grid-template-columns: 1fr 1.2fr;
+         gap: 2rem;
+         align-items: center;
+      }
+
+      .sticker-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 1rem;
+      }
+
+      .sticker-container img {
+         width: 100%;
+         max-width: 420px;
+         height: auto;
+         filter: drop-shadow(0 15px 25px rgba(109, 40, 217, 0.25));
+         animation: float 4s ease-in-out infinite;
+      }
+
+      @keyframes float {
+         0%, 100% { transform: translateY(0px); }
+         50% { transform: translateY(-12px); }
+      }
+
+      /* 📢 NOTIFICATION SECTION (RIGHT SIDE) */
+      .notice-card {
+         background: var(--white);
+         border: 2px solid #e9d5ff;
+         border-radius: 20px;
+         padding: 2.2rem;
+         box-shadow: 0 10px 30px rgba(109, 40, 217, 0.1);
+      }
+
+      .notice-header {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         border-bottom: 2px solid #f3e8ff;
+         padding-bottom: 1rem;
+         margin-bottom: 1.5rem;
+      }
+
+      .notice-title {
+         font-size: 1.6rem;
+         font-weight: 800;
+         color: var(--text-dark);
+         display: flex;
+         align-items: center;
+         gap: 0.8rem;
+         margin: 0;
+      }
+
+      .notice-title i {
+         color: var(--purple-main);
+         font-size: 2rem;
+         animation: bell-ring 2s infinite ease-in-out;
+      }
+
+      .notice-badge {
+         background: var(--purple-main);
+         color: var(--white);
+         font-size: 0.95rem;
+         padding: 0.4rem 1.1rem;
+         border-radius: 20px;
+         font-weight: 800;
+      }
+
+      .notice-content {
+         background: var(--purple-card);
+         padding: 1.5rem;
+         border-radius: 14px;
+         border-left: 6px solid var(--purple-main);
+         border: 1px solid #e9d5ff;
+         border-left-width: 6px;
+      }
+
+      .notice-text {
+         font-size: 1.25rem;
+         color: var(--text-dark);
+         line-height: 1.6;
+         margin: 0;
+         word-break: break-word;
+         font-weight: 600;
+      }
+
+      .notice-time {
+         display: block;
+         margin-top: 1rem;
+         font-size: 0.95rem;
+         color: var(--purple-light);
+         font-weight: 700;
+      }
+
+      .icon-badge {
+         position: absolute;
+         top: 2px;
+         right: 2px;
+         width: 10px;
+         height: 10px;
+         background-color: var(--purple-soft);
+         border-radius: 50%;
+      }
+
+      /* 💬 GLOBAL CHAT BOX (BOTTOM SECTION) */
+      .chat-section {
+         margin: 0 auto 3rem auto;
+         max-width: 1200px;
+         padding: 0 1.5rem;
+      }
+
+      .embedded-chat-box {
+         background: var(--white);
+         border: 2px solid #e9d5ff;
+         border-radius: 22px;
+         height: 550px;
+         display: flex;
+         flex-direction: column;
+         box-shadow: 0 12px 35px rgba(109, 40, 217, 0.12);
+         overflow: hidden;
+      }
+
+      .chat-header {
+         background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+         color: var(--white);
+         padding: 1.4rem 1.8rem;
+         font-weight: 800;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         font-size: 1.4rem;
+      }
+
+      .chat-messages {
+         flex: 1;
+         padding: 1.8rem;
+         overflow-y: auto;
+         display: flex;
+         flex-direction: column;
+         gap: 1.2rem;
+         background: var(--purple-card);
+      }
+
+      /* 🎈 CHAT MESSAGE BUBBLE - INCREASED FONT SIZE */
+      .msg-bubble {
+         max-width: 80%;
+         padding: 1.1rem 1.6rem; /* ටිකක් Padding වැඩි කළා */
+         border-radius: 18px;
+         font-size: 1.35rem; /* 👈 Message Text එක ලොකු කළා (1.1rem -> 1.35rem) */
+         font-weight: 600;  /* 👈 Text එක වඩාත් පැහැදිලි කළා */
+         line-height: 1.5;
+         word-break: break-word;
+         position: relative;
+      }
+
+      /* 👤 SENDER NAME */
+      .sender-name {
+         display: block;
+         font-size: 1rem; /* 👈 Sender ගේ නමේ ප්‍රමාණය ලොකු කළා (0.88rem -> 1rem) */
+         font-weight: 800;
+         margin-bottom: 0.4rem;
+      }
+
+      .msg-user {
+         align-self: flex-end;
+         background: var(--purple-main);
+         color: var(--white);
+         border-bottom-right-radius: 2px;
+      }
+
+      .msg-user .sender-name {
+         color: #e9d5ff;
+         text-align: right;
+      }
+
+      .msg-other-user {
+         align-self: flex-start;
+         background: var(--white);
+         color: var(--text-dark);
+         border: 2px solid #e9d5ff;
+         border-bottom-left-radius: 2px;
+      }
+
+      .msg-other-user .sender-name {
+         color: var(--purple-main);
+      }
+
+      .msg-admin {
+         align-self: flex-start;
+         background: #f3e8ff;
+         color: var(--purple-dark);
+         border: 2px solid #d8b4fe;
+         border-bottom-left-radius: 2px;
+      }
+
+      .msg-admin .sender-name {
+         color: var(--purple-dark);
+      }
+
+      /* ⌨️ INPUT AREA */
+      .chat-input-area {
+         display: flex;
+         padding: 1.2rem;
+         background: var(--white);
+         border-top: 2px solid #f3e8ff;
+         gap: 1rem;
+      }
+
+      .chat-input-area input {
+         flex: 1;
+         padding: 1rem 1.3rem;
+         border-radius: 12px;
+         border: 2px solid #e9d5ff;
+         outline: none;
+         background: var(--purple-card);
+         color: var(--text-dark);
+         font-size: 1.2rem; /* 👈 Type කරන එකත් ලොකුවට පෙනෙන ලෙස හැදුවා */
+         font-weight: 600;
+      }
+
+      .chat-input-area input:focus {
+         border-color: var(--purple-main);
+      }
+
+      .chat-input-area button {
+         background: var(--purple-main);
+         border: none;
+         padding: 0.9rem 1.8rem;
+         border-radius: 12px;
+         cursor: pointer;
+         color: var(--white);
+         font-size: 1.15rem;
+         font-weight: 800;
+         transition: background 0.2s ease;
+      }
+
+      .chat-input-area button:hover {
+         background: var(--purple-dark);
+      }
+
+      @keyframes bell-ring {
+         0%, 100% { transform: rotate(0deg); }
+         10%, 30%, 50% { transform: rotate(15deg); }
+         20%, 40%, 60% { transform: rotate(-15deg); }
+         70% { transform: rotate(0deg); }
+      }
+
+      /* 📱 MOBILE RESPONSIVE DESIGN */
+      @media (max-width: 992px) {
+         .top-dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+         }
+
+         .sticker-container img {
+            max-width: 280px;
+         }
+      }
+
+      @media (max-width: 768px) {
+         .notice-card {
+            padding: 1.5rem;
+         }
+
+         .embedded-chat-box {
+            height: 480px;
+         }
+
+         .chat-header {
+            font-size: 1.2rem;
+            padding: 1rem;
+         }
+
+         .msg-bubble {
+            max-width: 88%;
+            font-size: 1.15rem; /* 👈 Mobile වලදීත් Font size එක වැඩි කරලා ඇත */
+         }
+      }
+</style>
+</head>
+<body>
+
+<header class="header">
+   <section class="flex">
+      <a href="home.html" class="logo">NEXUS Platform</a>
+
+      <form action="search.html" method="post" class="search-form">
+         <input type="text" name="search_box" required placeholder="search courses..." maxlength="100">
+         <button type="submit" class="fas fa-search"></button>
+      </form>
+
+      <div class="icons">
+         <div id="menu-btn" class="fas fa-bars"></div>
+         <div id="search-btn" class="fas fa-search"></div>
+         <div id="user-btn" class="fas fa-user"></div>
+         <div id="toggle-btn" class="fas fa-sun"></div>
+         <div id="noti-btn" class="fas fa-bell" style="position: relative; cursor: pointer;">
+            <span id="noti_badge" class="icon-badge" style="display: none;"></span>
+         </div>
+      </div>
+
+      <div class="profile">
+         <img src="images/pic-1.jpg" id="header_avatar" class="image" alt="">
+         <h3 class="name" id="profile-name">You..</h3>
+         <p class="role">student</p>
+         <a href="profile.html" class="btn">view profile</a>
+         <div class="flex-btn">
+            <button class="option-btn" style="width:100%; border:0; cursor:pointer;" id="logout-btn">logout</button>
+         </div>
+      </div>
+   </section>
+</header>   
+
+<!-- 📱 NAVIGATION SIDEBAR -->
+<div class="side-bar">
+   <div id="close-btn">
+      <i class="fas fa-times"></i>
+   </div>
+
+   <div class="profile">
+      <img src="images/pic-1.jpg" id="sidebar_avatar" class="image" alt="">
+      <h3 class="name" id="sidebar-name">You..</h3>
+      <p class="role">student</p>
+      <a href="profile.html" class="btn">view profile</a>
+   </div>
+
+   <nav class="navbar">
+      <a href="home.html"><i class="fas fa-home"></i><span>home</span></a>
+      <a href="about.html" class="active"><i class="fas fa-question"></i><span>about</span></a>
+      <a href="courses.html"><i class="fas fa-graduation-cap"></i><span>courses</span></a>
+      <a href="Live.html"><i class="fas fa-chalkboard-user"></i><span>Live</span></a>
+      <a href="contact.html"><i class="fas fa-headset"></i><span>contact us</span></a>
+   </nav>
+</div>
+
+<!-- 🖼️ STICKER & NOTIFICATION SECTION (GRID LAYOUT) -->
+<div class="top-dashboard-grid">
+   <!-- Left: Sticker Graphic -->
+   <div class="sticker-container">
+      <img src="images/about-img.svg" alt="Student Sticker">
+   </div>
+
+   <!-- Right: System Announcements -->
+   <div class="notice-card" id="notice_card">
+      <div class="notice-header">
+         <h2 class="notice-title">
+            <i class="fas fa-bell"></i> System Announcements
+         </h2>
+         <span id="dashboard_notif_count" class="notice-badge">0 New</span>
+      </div>
+      <div class="notice-content">
+         <p id="admin_message_text" class="notice-text">Checking for new notifications...</p>
+         <span id="admin_message_time" class="notice-time">
+            <i class="far fa-clock"></i> Live Sync
+         </span>
+      </div>
+   </div>
+</div>
+
+<!-- 💬 GLOBAL COMMUNITY CHAT BOX (BOTTOM SECTION) -->
+<section class="chat-section">
+   <div class="embedded-chat-box">
+      <div class="chat-header">
+         <span><i class="fas fa-users"></i> Global Community Chat</span>
+         <span style="font-size: 0.95rem; font-weight: normal; opacity: 0.95;">Public Student Group</span>
+      </div>
+      <div class="chat-messages" id="chat_messages_area">
+         <div class="msg-bubble msg-admin">
+            <span class="sender-name">👑 System Admin</span>
+            Welcome to the community chat! Messages sent here will display your name to all students.
+         </div>
+      </div>
+      <div class="chat-input-area">
+         <input type="text" id="chat_user_input" placeholder="Type a message to everyone...">
+         <button id="send_msg_btn"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+   </div>
+</section>
+
+<footer class="footer">
+   &copy; copyright @ 2026 by <span> Nimsara designer</span> | all rights reserved!
+</footer>
+
+<!-- External JS Scripts -->
+<script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Firebase Sync, Profile & Realtime Engine -->
+<script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+   import { getFirestore, doc, getDoc, collection, addDoc, query, where, orderBy, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+       apiKey: "AIzaSyCmciwmEbSDgA5PhCY12a_vKqXl4GDBeZ8",
+       authDomain: "school-project-5fe93.firebaseapp.com",
+       projectId: "school-project-5fe93",
+       storageBucket: "school-project-5fe93.firebasestorage.app",
+       messagingSenderId: "548925209782",
+       appId: "1:548925209782:web:cea0aac7d41a510b2fba17",
+       measurementId: "G-5MG8T54708"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const auth = getAuth(app);
+   const db = getFirestore(app);
+
+   let currentUserName = localStorage.getItem('student_name') || "Student";
+
+   const updateUI = (name, avatar) => {
+       const pName = document.getElementById('profile-name');
+       const sName = document.getElementById('sidebar-name');
+       const hAvatar = document.getElementById('header_avatar');
+       const sAvatar = document.getElementById('sidebar_avatar');
+
+       if (pName && name) pName.innerText = name;
+       if (sName && name) sName.innerText = name;
+       if (hAvatar && avatar) hAvatar.src = avatar;
+       if (sAvatar && avatar) sAvatar.src = avatar;
+   };
+
+   // Sync from LocalStorage
+   updateUI(localStorage.getItem('student_name'), localStorage.getItem('student_avatar'));
+
+   let activeUserUid = localStorage.getItem('student_id') || "guest_user";
+
+   // Firebase Auth Sync
+   onAuthStateChanged(auth, async (user) => {
+       if (user) {
+           activeUserUid = user.uid;
+           const snap = await getDoc(doc(db, "students", user.uid));
+           if (snap.exists()) {
+               currentUserName = snap.data().fullName || user.displayName || "Student";
+               const avatar = snap.data().avatar || "images/pic-1.jpg";
+               localStorage.setItem('student_name', currentUserName);
+               localStorage.setItem('student_avatar', avatar);
+               updateUI(currentUserName, avatar);
+           }
+       }
+       listenToNotifications(activeUserUid);
+       setupGlobalChat(activeUserUid);
+   });
+
+   // Logout Action
+   const logoutBtn = document.getElementById('logout-btn');
+   if (logoutBtn) {
+       logoutBtn.addEventListener('click', () => {
+           signOut(auth).then(() => {
+               localStorage.clear();
+               window.location.href = "login.html";
+           }).catch(() => {
+               localStorage.clear();
+               window.location.href = "login.html";
+           });
+       });
+   }
+
+   // 1. System Notifications Listener
+   function listenToNotifications(userUid) {
+       const msgText = document.getElementById('admin_message_text');
+       const msgTime = document.getElementById('admin_message_time');
+       const notifBadge = document.getElementById('dashboard_notif_count');
+       const iconBadge = document.getElementById('noti_badge');
+
+       const q = query(collection(db, "notifications"), where("userId", "in", [userUid, "all"]));
+
+       onSnapshot(q, (snapshot) => {
+           if (!snapshot.empty) {
+               let docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+               docs.sort((a, b) => {
+                   const tA = a.timestamp?.toMillis ? a.timestamp.toMillis() : (a.timestamp || 0);
+                   const tB = b.timestamp?.toMillis ? b.timestamp.toMillis() : (b.timestamp || 0);
+                   return tB - tA;
+               });
+
+               const latest = docs[0];
+               if (msgText) msgText.innerText = latest.message || "No Message Content";
+               
+               if (msgTime) {
+                   const timeVal = latest.timestamp?.toDate ? latest.timestamp.toDate() : new Date(latest.timestamp);
+                   msgTime.innerHTML = `<i class="far fa-clock"></i> ${timeVal ? timeVal.toLocaleString() : 'Just now'}`;
+               }
+
+               if (notifBadge) {
+                   notifBadge.innerText = latest.isRead ? "0 New" : "1 New";
+                   notifBadge.style.background = latest.isRead ? "var(--purple-light)" : "var(--purple-main)";
+               }
+
+               if (!latest.isRead) {
+                   if (iconBadge) iconBadge.style.display = "block";
+
+                   Swal.fire({
+                       title: '📢 System Alert',
+                       text: latest.message,
+                       icon: latest.type || 'info',
+                       background: '#ffffff',
+                       color: '#2e1065',
+                       confirmButtonColor: '#6d28d9'
+                   }).then(async (res) => {
+                       if (res.isConfirmed) {
+                           await updateDoc(doc(db, "notifications", latest.id), { isRead: true });
+                       }
+                   });
+               } else {
+                   if (iconBadge) iconBadge.style.display = "none";
+               }
+           } else {
+               if (msgText) msgText.innerText = "No announcements available.";
+               if (notifBadge) notifBadge.innerText = "0 New";
+               if (iconBadge) iconBadge.style.display = "none";
+           }
+       });
+   }
+
+   // 2. Global Chat Setup
+   function setupGlobalChat(userUid) {
+       const sendBtn = document.getElementById('send_msg_btn');
+       const inputField = document.getElementById('chat_user_input');
+       const msgContainer = document.getElementById('chat_messages_area');
+
+       const globalChatRef = collection(db, "chats", "global", "messages");
+
+       async function sendMessage() {
+           const text = inputField.value.trim();
+           if (!text) return;
+
+           inputField.value = "";
+
+           await addDoc(globalChatRef, {
+               sender: "user",
+               senderName: currentUserName,
+               senderId: userUid,
+               message: text,
+               timestamp: serverTimestamp()
+           });
+       }
+
+       sendBtn.onclick = sendMessage;
+       inputField.addEventListener("keypress", (e) => {
+           if (e.key === "Enter") sendMessage();
+       });
+
+       const q = query(globalChatRef, orderBy("timestamp", "asc"));
+       onSnapshot(q, (snapshot) => {
+           msgContainer.innerHTML = `
+               <div class="msg-bubble msg-admin">
+                  <span class="sender-name">👑 System Admin</span>
+                  Welcome to the community chat! Messages sent here will display your name to all students.
+               </div>`;
+
+           snapshot.forEach((doc) => {
+               const data = doc.data();
+               const msgDiv = document.createElement("div");
+               msgDiv.classList.add("msg-bubble");
+               
+               const isMe = data.senderId === userUid;
+
+               if (data.sender === "admin") {
+                   msgDiv.classList.add("msg-admin");
+                   msgDiv.innerHTML = `<span class="sender-name">👑 Admin</span>${escapeHTML(data.message)}`;
+               } else if (isMe) {
+                   msgDiv.classList.add("msg-user");
+                   msgDiv.innerHTML = `<span class="sender-name">You</span>${escapeHTML(data.message)}`;
+               } else {
+                   msgDiv.classList.add("msg-other-user");
+                   const nameToDisplay = data.senderName || 'Student';
+                   msgDiv.innerHTML = `<span class="sender-name"><i class="fas fa-user-circle"></i> ${escapeHTML(nameToDisplay)}</span>${escapeHTML(data.message)}`;
+               }
+               
+               msgContainer.appendChild(msgDiv);
+           });
+           msgContainer.scrollTop = msgContainer.scrollHeight;
+       });
+   }
+
+   function escapeHTML(str) {
+       return str.replace(/[&<>'"]/g, 
+           tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+       );
+   }
+</script>
+
+</body>
+</html>

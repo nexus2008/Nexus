@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>contact us</title>
+
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+   <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="header">
+   
+   <section class="flex">
+
+      <a href="home.html" class="logo">NEXUS Platform</a>
+
+      <form action="search.html" method="post" class="search-form">
+         <input type="text" name="search_box" required placeholder="search courses..." maxlength="100">
+         <button type="submit" class="fas fa-search"></button>
+      </form>
+
+      <div class="icons">
+         <div id="menu-btn" class="fas fa-bars"></div>
+         <div id="search-btn" class="fas fa-search"></div>
+         <div id="user-btn" class="fas fa-user"></div>
+         <div id="toggle-btn" class="fas fa-sun"></div>
+      </div>
+
+      <div class="profile">
+         <img src="images/pic-1.jpg" id="header_avatar" class="image" alt="">
+         <h3 class="name" id="profile-name">You..</h3>
+         <p class="role">student</p>
+         <a href="profile.html" class="btn">view profile</a>
+         <div class="flex-btn">
+            <button class="option-btn" style="width:100%; border:0; cursor:pointer;" id="logout-btn">logout</button>
+         </div>
+      </div>
+
+   </section>
+
+</header>   
+
+<div class="side-bar">
+
+   <div id="close-btn">
+      <i class="fas fa-times"></i>
+   </div>
+
+   <div class="profile">
+      <img src="images/pic-1.jpg" id="sidebar_avatar" class="image" alt="">
+      <h3 class="name" id="sidebar-name">You..</h3>
+      <p class="role">student</p>
+      <a href="profile.html" class="btn">view profile</a>
+   </div>
+
+   <nav class="navbar">
+      <a href="home.html"><i class="fas fa-home"></i><span>home</span></a>
+      <a href="about.html"><i class="fas fa-question"></i><span>about</span></a>
+      <a href="courses.html"><i class="fas fa-graduation-cap"></i><span>courses</span></a>
+      <a href="Live.html"><i class="fas fa-chalkboard-user"></i><span>Live</span></a>
+      <a href="contact.html"><i class="fas fa-headset"></i><span>contact us</span></a>
+   </nav>
+
+</div>
+
+<section class="contact">
+
+   <div class="row">
+
+      <div class="image">
+         <img src="images/contact-img.svg" alt="">
+      </div>
+
+     
+
+   </div>
+
+   <div class="box-container">
+
+      <div class="box">
+         <i class="fas fa-envelope"></i>
+         <h3>Main Channel</Main></h3>
+         <a href="https://t.me/Nexus_web_update">Click</a>
+        
+      </div>
+      
+      <div class="box">
+         <i class="fas fa-envelope"></i>
+         <h3>Tiut Channel</h3>
+         <a href="https://t.me/+-H1FqREqAuQ2Mjk1">Click</a>
+      </div>
+
+      <div class="box">
+         <i class="fas fa-phone"></i>
+         <h3>Contact Bot</h3>
+         <a href="https://t.me/Nexusbook_live_bot"> Click</a>
+      </div>
+
+   </div>
+
+</section>
+
+<footer class="footer">
+   &copy; copyright @ 2026 by <span> Nimsara designer</span> | all rights reserved!
+</footer>
+
+<script src="js/script.js"></script>
+
+<!-- Profile Sync & Auth Handler Script -->
+<script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+       apiKey: "AIzaSyCmciwmEbSDgA5PhCY12a_vKqXl4GDBeZ8",
+       authDomain: "school-project-5fe93.firebaseapp.com",
+       projectId: "school-project-5fe93",
+       storageBucket: "school-project-5fe93.firebasestorage.app",
+       messagingSenderId: "548925209782",
+       appId: "1:548925209782:web:cea0aac7d41a510b2fba17",
+       measurementId: "G-5MG8T54708"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const auth = getAuth(app);
+   const db = getFirestore(app);
+
+   const updateUI = (name, avatar) => {
+       if (name) {
+           const pName = document.getElementById('profile-name');
+           const sName = document.getElementById('sidebar-name');
+           if(pName) pName.innerText = name;
+           if(sName) sName.innerText = name;
+       }
+       if (avatar) {
+           const hAvatar = document.getElementById('header_avatar');
+           const sAvatar = document.getElementById('sidebar_avatar');
+           if(hAvatar) hAvatar.src = avatar;
+           if(sAvatar) sAvatar.src = avatar;
+       }
+   };
+
+   // LocalStorage එකෙන් Sync කිරීම
+   const localName = localStorage.getItem('student_name');
+   const localAvatar = localStorage.getItem('student_avatar');
+   if (localName || localAvatar) {
+       updateUI(localName, localAvatar);
+   }
+
+   // Firebase Sync
+   onAuthStateChanged(auth, async (user) => {
+       if (user) {
+           const userDocRef = doc(db, "students", user.uid);
+           const userDocSnap = await getDoc(userDocRef);
+
+           if (userDocSnap.exists()) {
+               const data = userDocSnap.data();
+               const name = data.fullName || user.displayName || "Student";
+               const avatar = data.avatar || "images/pic-1.jpg";
+               updateUI(name, avatar);
+           }
+       }
+   });
+
+   // Logout Event
+   const logoutBtn = document.getElementById('logout-btn');
+   if(logoutBtn) {
+       logoutBtn.addEventListener('click', () => {
+           signOut(auth).then(() => {
+               localStorage.clear();
+               window.location.href = "login.html";
+           }).catch(() => {
+               localStorage.clear();
+               window.location.href = "login.html";
+           });
+       });
+   }
+</script>
+   
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Home - NEXUS Learning Dashboard</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+   <link rel="stylesheet" href="css/style.css">
+   
+   <style>
+      :root {
+         --purple-dark: #4c1d95;
+         --purple-main: #6d28d9;
+         --purple-light: #8b5cf6;
+         --purple-soft: #a855f7;
+         --purple-bg: #f5f3ff;
+         --purple-card-bg: #faf5ff;
+         --white: #ffffff;
+         --text-dark: #2e1065;
+         --text-sub: #5b21b6;
+      }
+
+      body {
+         background-color: #f3e8ff !important;
+         font-size: 17px;
+      }
+
+      .dashboard-container {
+         padding: 2.5rem;
+         max-width: 1280px;
+         margin: 0 auto;
+      }
+      
+      /* Welcome Banner */
+      .welcome-banner {
+         background: linear-gradient(135deg, var(--purple-dark), var(--purple-main), var(--purple-light));
+         color: var(--white);
+         padding: 3rem 2.5rem;
+         border-radius: 24px;
+         margin-bottom: 2.5rem;
+         box-shadow: 0 15px 35px rgba(109, 40, 217, 0.35);
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         flex-wrap: wrap;
+         gap: 1.8rem;
+         border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .welcome-banner h2 {
+         font-size: 2.6rem;
+         font-weight: 800;
+         margin-bottom: 0.8rem;
+         color: var(--white);
+      }
+
+      .welcome-banner p {
+         font-size: 1.25rem;
+         opacity: 0.95;
+         margin: 0;
+         color: var(--white);
+      }
+
+      /* User UID Badge Styling */
+      .uid-badge {
+         background: rgba(255, 255, 255, 0.2);
+         backdrop-filter: blur(10px);
+         color: var(--white);
+         padding: 1.1rem 1.8rem;
+         font-size: 1.05rem;
+         font-weight: 700;
+         border-radius: 16px;
+         display: inline-flex;
+         align-items: center;
+         gap: 0.8rem;
+         border: 1px solid rgba(255, 255, 255, 0.4);
+         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+         letter-spacing: 0.5px;
+      }
+
+      /* Quick Stats Grid */
+      .stats-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+         gap: 1.8rem;
+         margin-bottom: 3rem;
+      }
+
+      .stat-card {
+         background: var(--white);
+         padding: 1.8rem;
+         border-radius: 20px;
+         box-shadow: 0 10px 25px rgba(109, 40, 217, 0.08);
+         display: flex;
+         align-items: center;
+         gap: 1.5rem;
+         border: 2px solid #e9d5ff;
+         transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+         transform: translateY(-5px);
+         border-color: var(--purple-light);
+         box-shadow: 0 15px 30px rgba(109, 40, 217, 0.18);
+      }
+
+      /* 3D Icon Styling */
+      .icon-3d {
+         width: 70px;
+         height: 70px;
+         border-radius: 20px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 2.2rem;
+         color: var(--white);
+         flex-shrink: 0;
+         background: linear-gradient(145deg, var(--purple-soft), var(--purple-dark));
+         box-shadow: inset 0 3px 5px rgba(255, 255, 255, 0.5),
+                     inset 0 -4px 8px rgba(0, 0, 0, 0.4),
+                     0 10px 20px rgba(109, 40, 217, 0.3);
+         text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+
+      .stat-details h3 {
+         font-size: 1.8rem;
+         font-weight: 800;
+         color: var(--text-dark);
+         margin: 0;
+      }
+
+      .stat-details p {
+         color: var(--text-sub);
+         font-size: 1.05rem;
+         font-weight: 600;
+         margin: 0;
+      }
+
+      /* Main Dashboard Layout */
+      .dashboard-layout {
+         display: grid;
+         grid-template-columns: 2fr 1fr;
+         gap: 2rem;
+      }
+
+      @media (max-width: 992px) {
+         .dashboard-layout {
+            grid-template-columns: 1fr;
+         }
+      }
+
+      .content-box {
+         background: var(--white);
+         padding: 2.2rem;
+         border-radius: 22px;
+         border: 2px solid #e9d5ff;
+         box-shadow: 0 10px 25px rgba(109, 40, 217, 0.06);
+         margin-bottom: 2rem;
+      }
+
+      .section-header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 1.5rem;
+      }
+
+      .section-title {
+         font-size: 1.6rem;
+         font-weight: 800;
+         color: var(--text-dark);
+         display: flex;
+         align-items: center;
+         gap: 0.8rem;
+         margin: 0;
+      }
+
+      /* Subject Cards */
+      .subject-cards-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+         gap: 1.5rem;
+      }
+
+      .subject-card {
+         background: var(--purple-card-bg);
+         border: 2px solid #e9d5ff;
+         border-radius: 18px;
+         padding: 1.5rem;
+         transition: all 0.3s ease;
+      }
+
+      .subject-card:hover {
+         background: var(--white);
+         border-color: var(--purple-main);
+         transform: translateY(-4px);
+         box-shadow: 0 12px 25px rgba(109, 40, 217, 0.15);
+      }
+
+      .subject-badge {
+         display: inline-block;
+         padding: 0.4rem 0.9rem;
+         border-radius: 10px;
+         font-size: 0.85rem;
+         font-weight: 800;
+         text-transform: uppercase;
+         margin-bottom: 1rem;
+         background: #f3e8ff;
+         color: var(--purple-dark);
+         border: 1px solid #d8b4fe;
+      }
+
+      .subject-card h4 {
+         font-size: 1.35rem;
+         font-weight: 800;
+         color: var(--text-dark);
+         margin-bottom: 0.6rem;
+      }
+
+      .subject-card p {
+         font-size: 1rem;
+         color: var(--text-sub);
+         margin-bottom: 1.2rem;
+         line-height: 1.5;
+      }
+
+      .btn-subject {
+         display: block;
+         text-align: center;
+         background: var(--purple-main);
+         color: var(--white);
+         padding: 0.8rem 1.2rem;
+         border-radius: 12px;
+         text-decoration: none;
+         font-size: 1.05rem;
+         font-weight: 700;
+         transition: all 0.3s ease;
+      }
+
+      .btn-subject:hover {
+         background: var(--purple-dark);
+         color: var(--white);
+      }
+
+      /* Live Class Card Widget */
+      .live-widget {
+         background: linear-gradient(135deg, var(--purple-dark), #2e1065);
+         color: var(--white);
+         border-radius: 20px;
+         padding: 2rem;
+         position: relative;
+         border: 2px solid rgba(255, 255, 255, 0.15);
+         box-shadow: 0 12px 30px rgba(76, 29, 149, 0.3);
+      }
+
+      .live-badge {
+         background: var(--white);
+         color: var(--purple-dark);
+         font-size: 0.9rem;
+         font-weight: 800;
+         padding: 0.4rem 1rem;
+         border-radius: 20px;
+         display: inline-flex;
+         align-items: center;
+         gap: 0.5rem;
+         margin-bottom: 1.2rem;
+         animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+         0% { opacity: 1; }
+         50% { opacity: 0.65; }
+         100% { opacity: 1; }
+      }
+
+      .live-widget h4 {
+         font-size: 1.6rem;
+         font-weight: 800;
+         color: var(--white);
+         margin-bottom: 0.5rem;
+      }
+
+      .live-widget p {
+         color: #e9d5ff;
+         font-size: 1.1rem;
+         margin-bottom: 1.5rem;
+      }
+
+      .live-details {
+         display: flex;
+         gap: 1.8rem;
+         margin-bottom: 1.5rem;
+         font-size: 1.05rem;
+         color: #f3e8ff;
+         font-weight: 600;
+      }
+
+      /* Notice List */
+      .notice-list {
+         list-style: none;
+         padding: 0;
+         margin: 0;
+      }
+
+      .notice-item {
+         padding: 1.1rem 0;
+         border-bottom: 2px solid #f3e8ff;
+      }
+
+      .notice-item:last-child {
+         border-bottom: none;
+      }
+
+      .notice-item h5 {
+         font-size: 1.15rem;
+         font-weight: 800;
+         color: var(--text-dark);
+         margin-bottom: 0.3rem;
+      }
+
+      .notice-item p {
+         font-size: 1rem;
+         color: var(--text-sub);
+         margin: 0 0 0.4rem 0;
+      }
+
+      .notice-date {
+         font-size: 0.85rem;
+         color: var(--purple-light);
+         font-weight: 700;
+      }
+
+      /* Quick Resource List */
+      .resource-item {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         padding: 1rem 1.2rem;
+         background: var(--purple-card-bg);
+         border-radius: 14px;
+         margin-bottom: 0.8rem;
+         border: 2px solid #e9d5ff;
+      }
+
+      .resource-info {
+         display: flex;
+         align-items: center;
+         gap: 1rem;
+      }
+
+      .resource-info i {
+         font-size: 1.5rem;
+         color: var(--purple-main);
+      }
+
+      .resource-info span {
+         font-size: 1.05rem;
+         font-weight: 700;
+         color: var(--text-dark);
+      }
+   </style>
+</head>
+<body>
+
+<header class="header">
+   <section class="flex">
+      <a href="home.html" class="logo">NEXUS Platform</a>
+      <form action="search.html" method="post" class="search-form">
+         <input type="text" name="search_box" required placeholder="search courses..." maxlength="100">
+         <button type="submit" class="fas fa-search"></button>
+      </form>
+      <div class="icons">
+         <div id="menu-btn" class="fas fa-bars"></div>
+         <div id="search-btn" class="fas fa-search"></div>
+         <div id="user-btn" class="fas fa-user"></div>
+         <div id="toggle-btn" class="fas fa-sun"></div>
+      </div>
+      <div class="profile">
+         <img src="images/pic-1.jpg" id="header_avatar" class="image" alt="">
+         <h3 class="name" id="profile-name">Loading...</h3>
+         <p class="role">student</p>
+         <a href="profile.html" class="btn">view profile</a>
+         <div class="flex-btn">
+            <button class="option-btn" style="width:100%; border:0; cursor:pointer;" id="logout-btn">logout</button>
+         </div>
+      </div>
+   </section>
+</header>   
+
+<div class="side-bar">
+   <div id="close-btn"><i class="fas fa-times"></i></div>
+   <div class="profile">
+      <img src="images/pic-1.jpg" id="sidebar_avatar" class="image" alt="">
+      <h3 class="name" id="sidebar-name">Loading...</h3>
+      <p class="role">student</p>
+      <a href="profile.html" class="btn">view profile</a>
+   </div>
+   <nav class="navbar">
+      <a href="home.html"><i class="fas fa-home"></i><span>home</span></a>
+      <a href="about.html"><i class="fas fa-question"></i><span>about</span></a>
+      <a href="courses.html"><i class="fas fa-graduation-cap"></i><span>courses</span></a>
+      <a href="Live.html"><i class="fas fa-chalkboard-user"></i><span>Live</span></a>
+      <a href="contact.html"><i class="fas fa-headset"></i><span>contact us</span></a>
+   </nav>
+</div>
+
+<!-- USER DASHBOARD SECTION -->
+<section class="dashboard-container">
+   
+   <!-- WELCOME BANNER WITH USER UID -->
+   <div class="welcome-banner">
+      <div>
+         <h2>සාදරයෙන් පිළිගන්නවා, <span id="banner-user-name">Student</span>! 👋</h2>
+         <p></p>
+      </div>
+      <div class="uid-badge">
+         <i class="fas fa-id-card"></i> UID: <span id="banner-user-uid">Loading...</span>
+      </div>
+   </div>
+
+   <!-- KEY STATS (With 3D Icons) -->
+   <div class="stats-grid">
+      <div class="stat-card">
+         <div class="icon-3d">
+            <i class="fas fa-book-open"></i>
+         </div>
+         <div class="stat-details">
+            <h3> <a href="courses.html">Class Room </a> </h3>
+            <p></p>
+         </div>
+      </div>
+
+      <div class="stat-card">
+         <div class="icon-3d">
+            <i class="fas fa-video"></i>
+         </div>
+         <div class="stat-details">
+            <h3><a href="Live.html"> Live Class</a> </h3>
+            <p></p>
+         </div>
+      </div>
+
+      <div class="stat-card">
+         <div class="icon-3d">
+            <i class="fas fa-user-check"></i>
+         </div>
+         <div class="stat-details">
+            <h3><a href="profile.html">Profile </a></h3>
+            <p></p>
+         </div>
+      </div>
+
+      <div class="stat-card">
+         <div class="icon-3d">
+            <i class="fas fa-file-pdf"></i>
+         </div>
+         <div class="stat-details">
+            <h3> <a href="about.html">Chat Room </a> </h3>
+            <p></p>
+         </div>
+      </div>
+   </div>
+
+   <!-- MAIN DASHBOARD CONTENT -->
+   <div class="dashboard-layout">
+      
+      <!-- LEFT COLUMN -->
+      <div>
+         
+         <!-- UPCOMING LIVE CLASS WIDGET -->
+         <div class="content-box">
+            <div class="section-header">
+               <h3 class="section-title"><i class="fas fa-headset" style="color: var(--purple-main);"></i> ඉදිරි Live Class එක</h3>
+            </div>
+            
+            <div class="live-widget">
+               <span class="live-badge"><i class="fas fa-circle"></i> Zoom Live Class</span>
+               <h4 id="dash-live-title">2026 Combined Maths Live Class</h4>
+               <p id="dash-live-sub">Pure Mathematics - Theory & Revision</p>
+               
+               <div class="live-details">
+                  <span><i class="fas fa-user-tie"></i> <span id="dash-live-tutor">Manoj Solangarachchi</span></span>
+                  <span><i class="fas fa-clock"></i> <span id="dash-live-date">Today - 7:00 PM</span></span>
+               </div>
+               
+               <a href="Live.html" class="banner-btn" style="background:var; color: white;">
+                  <i class="fas fa-sign-in-alt"></i> Live Class එකට සම්බන්ධ වන්න
+               </a>
+            </div>
+         </div>
+
+         <!-- QUICK SUBJECT ACCESS -->
+         <div class="content-box">
+            <div class="section-header">
+               <h3 class="section-title"><i class="fas fa-layer-group" style="color: var(--purple-main);"></i> විෂය ධාරාවන් (Subjects)</h3>
+               <a href="courses.html" style="font-size:1.05rem; font-weight:800; color: var(--purple-main);"><h3>සියල්ල බලන්න  &rarr;</h3> </a>
+            </div>
+
+            <div class="subject-cards-grid">
+               <!-- Chemistry -->
+               <div class="subject-card">
+                  <span class="subject-badge">Chemistry</span>
+                  <h3>Chemistry Revision</h3>
+                  <p>Inorganic & Organic Revision </p>
+                  <a href="courses -1.html" class="btn-subject">පාඩම් නරඹන්න</a>
+               </div>
+
+               <!-- Physics -->
+               <div class="subject-card">
+                  <span class="subject-badge">Physics</span>
+                  <h3>Physics Revision</h3>
+                  <p>Mechanics, Light & Thermal Physics Revision</p>
+                  <a href="courses -2.html" class="btn-subject">පාඩම් නරඹන්න</a>
+               </div>
+
+               <!-- Maths -->
+               <div class="subject-card">
+                  <span class="subject-badge">Combined Maths</span>
+                  <h3>C.Maths Revision</h3>
+                  <p>Pure & Applied Mathematics Revision</p>
+                  <a href="courses -3.html" class="btn-subject">පාඩම් නරඹන්න</a>
+               </div>
+            </div>
+         </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN (SIDEBAR WIDGETS) -->
+      <div>
+         
+         <!-- DYNAMIC ANNOUNCEMENTS / NOTICES -->
+         <div class="content-box">
+            <div class="section-header">
+               <h3 class="section-title"><i class="fas fa-bullhorn" style="color: var(--purple-main);"></i> නිවේදන (Announcements)</h3>
+            </div>
+            
+            <ul class="notice-list" id="notice-list">
+               <li class="notice-item">
+                  <p style="color: var(--text-sub);">නිවේදන ලෝඩ් වෙමින් පවතී...</p>
+               </li>
+            </ul>
+         </div>
+
+         <!-- QUICK STUDY RESOURCES -->
+         <div class="content-box">
+            <div class="section-header">
+               <h3 class="section-title"><i class="fas fa-download" style="color: var(--purple-main);"></i> Quick Resources</h3>
+            </div>
+
+            <div class="resource-item">
+               <div class="resource-info">
+                  <i class="fas fa-file-pdf"></i>
+                  <span>Resource Book- Chemistry</span>
+               </div>
+               <a href="https://www.mathsapi.com/2020/09/al-chemistry-resource-book-sinhala.html" style="color: var(--purple-main);"><i class="fas fa-download"></i></a>
+            </div>
+
+            <div class="resource-item">
+               <div class="resource-info">
+                  <i class="fas fa-file-pdf"></i>
+                  <span>Resource Book- Physics</span>
+               </div>
+               <a href="https://www.mathsapi.com/2021/08/al-physics-resource-book-sinhala-medium.html" style="color: var(--purple-main);"><i class="fas fa-download"></i></a>
+            </div>
+
+            <div class="resource-item">
+               <div class="resource-info">
+                  <i class="fas fa-file-pdf"></i>
+                  <span> Resource Book- Maths</span>
+               </div>
+               <a href="https://nie.lk/pdffiles/other/resobk02sin.pdf" style="color: var(--purple-main);"><i class="fas fa-download"></i></a>
+            </div>
+         </div>
+
+      </div>
+
+   </div>
+
+</section>
+
+<footer class="footer">
+   &copy; copyright @ 2026 by <span> Nimsara designer</span> | all rights reserved!
+</footer>
+
+<script src="js/script.js"></script>
+
+<!-- Profile Sync, Live Notice Updates & Firebase Session Script -->
+<script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+   import { getFirestore, doc, getDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+       apiKey: "AIzaSyCmciwmEbSDgA5PhCY12a_vKqXl4GDBeZ8",
+       authDomain: "school-project-5fe93.firebaseapp.com",
+       projectId: "school-project-5fe93",
+       storageBucket: "school-project-5fe93.firebasestorage.app",
+       messagingSenderId: "548925209782",
+       appId: "1:548925209782:web:cea0aac7d41a510b2fba17",
+       measurementId: "G-5MG8T54708"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const auth = getAuth(app);
+   const db = getFirestore(app);
+
+   // Firestore හරහා Dynamic ලෙස Notices ලබාගැනීම
+   const loadNotices = () => {
+      const noticeList = document.getElementById('notice-list');
+      if (!noticeList) return;
+
+      const q = query(collection(db, "notices"), orderBy("createdAt", "desc"));
+      
+      onSnapshot(q, (snapshot) => {
+         noticeList.innerHTML = '';
+         
+         if (snapshot.empty) {
+            noticeList.innerHTML = '<li class="notice-item"><p>තවම නිවේදන කිසිවක් නැත.</p></li>';
+            return;
+         }
+
+         snapshot.forEach((doc) => {
+            const data = doc.data();
+            const li = document.createElement('li');
+            li.className = 'notice-item';
+            li.innerHTML = `
+               <h5>${data.title}</h5>
+               <p>${data.message}</p>
+               <span class="notice-date"><i class="far fa-clock"></i> ${data.date}</span>
+            `;
+            noticeList.appendChild(li);
+         });
+      });
+   };
+
+   loadNotices();
+
+   // Load Live Class Details from LocalStorage
+   const loadLiveClassWidget = () => {
+      const liveTitle = localStorage.getItem('nexus_class_title');
+      const liveSub = localStorage.getItem('nexus_subject');
+      const liveTutor = localStorage.getItem('nexus_tutor_name');
+      const liveDate = localStorage.getItem('nexus_date');
+
+      if (liveTitle) document.getElementById('dash-live-title').innerText = liveTitle;
+      if (liveSub) document.getElementById('dash-live-sub').innerText = liveSub;
+      if (liveTutor) document.getElementById('dash-live-tutor').innerText = liveTutor;
+      if (liveDate) document.getElementById('dash-live-date').innerText = liveDate;
+   };
+
+   // UI Profile Sync
+   const updateUI = (name, avatar, uid) => {
+       if (name) {
+           const pName = document.getElementById('profile-name');
+           const sName = document.getElementById('sidebar-name');
+           const bName = document.getElementById('banner-user-name');
+           if(pName) pName.innerText = name;
+           if(sName) sName.innerText = name;
+           if(bName) bName.innerText = name;
+       }
+       if (avatar) {
+           const hAvatar = document.getElementById('header_avatar');
+           const sAvatar = document.getElementById('sidebar_avatar');
+           if(hAvatar) hAvatar.src = avatar;
+           if(sAvatar) sAvatar.src = avatar;
+       }
+       if (uid) {
+           const bUid = document.getElementById('banner-user-uid');
+           if(bUid) bUid.innerText = uid;
+       }
+   };
+
+   // Local Storage Profile Check
+   const localName = localStorage.getItem('student_name');
+   const localAvatar = localStorage.getItem('student_avatar');
+   const localUid = localStorage.getItem('student_uid');
+   const studentId = localStorage.getItem('student_id');
+
+   if (localName || localAvatar || localUid) {
+       updateUI(localName, localAvatar, localUid);
+   }
+
+   loadLiveClassWidget();
+
+   // Firebase Session & Protection
+   onAuthStateChanged(auth, async (user) => {
+       if (user) {
+           const uid = user.uid;
+           let userDoc = await getDoc(doc(db, "students", uid));
+           if (!userDoc.exists()) {
+               userDoc = await getDoc(doc(db, "users", uid));
+           }
+
+           let name = "Student";
+           let avatar = "images/pic-1.jpg";
+
+           if (userDoc.exists()) {
+               const data = userDoc.data();
+               name = data.fullName || data.name || user.displayName || "Student";
+               avatar = data.avatar || "images/pic-1.jpg";
+           }
+
+           localStorage.setItem('student_name', name);
+           localStorage.setItem('student_avatar', avatar);
+           localStorage.setItem('student_uid', uid);
+           updateUI(name, avatar, uid);
+       } else {
+           if (!studentId) {
+               window.location.href = 'login.html';
+           }
+       }
+   });
+
+   // Logout Action
+   const logoutBtn = document.getElementById('logout-btn');
+   if(logoutBtn) {
+       logoutBtn.addEventListener('click', () => {
+           signOut(auth).then(() => {
+               localStorage.clear();
+               window.location.href = 'login.html';
+           }).catch(() => {
+               localStorage.clear();
+               window.location.href = 'login.html';
+           });
+       });
+   }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Chemistry Revision - NEXUS Platform</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+   <link rel="stylesheet" href="css/style.css">
+
+   <style>
+    /* Card Grid Setup - Row එකකට Card 3ක් */
+    .box-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        align-items: stretch;
+    }
+
+    /* Card Box Styles & Neon Purple Hover / Focus Effect */
+    .courses .box-container .box {
+        transition: all 0.3s ease-in-out;
+        border: 2px solid transparent;
+        border-radius: .5rem;
+    }
+
+    .courses .box-container .box:hover,
+    .courses .box-container .box:active,
+    .courses .box-container .box:focus-within {
+        border-color: #a020f0;
+        box-shadow: 0 0 15px #a020f0, 0 0 30px rgba(160, 32, 240, 0.4);
+        transform: translateY(-5px);
+    }
+
+    /* Responsive Grid Adjustments */
+    @media (max-width: 991px) {
+        .box-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .box-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Single-Page Video Player Overlay Styles */
+    #single-page-video-view {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #fff;
+        z-index: 10000;
+        overflow-y: auto;
+        padding: 2rem;
+    }
+
+    .player-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .video-display-box iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: .5rem;
+        border: none;
+        background: #000;
+    }
+
+    .playlist-items {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Lesson Parts (Playlist Cards) Styles with Neon Purple Glow */
+.playlist-card {
+    padding: 1rem 1.5rem;
+    background: #f5f5f5; /* කැපී පෙනෙන පරිදි පසුබිම Dark තේමාවකට සකසා ඇත */
+    color: #0c0909;
+    border-radius: .5rem;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 2px solid #20bff0; /* Neon Purple Border */
+    box-shadow: 0 0 8px rgba(32, 181, 240, 0.4); /* Normal Glow Effect */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover කළ විට Glow එක වැඩි වන ආකාරය */
+.playlist-card:hover {
+    border-color: #7df0ff;
+    box-shadow: 0 0 15px #4bdafd, 0 0 25px rgba(32, 209, 240, 0.6);
+    transform: translateX(10px); /* කුඩා Animation එකක් */
+}
+
+/* Click කර තෝරාගත් (Active) වීඩියෝ කොටස කැපී පෙනෙන ආකාරය */
+.playlist-card.active {
+    background: #83e5f1;
+    color: #000000;
+    border-color: #000000;
+    box-shadow: 0 0 20px #50d1f1, 0 0 35px rgba(97, 198, 238, 0.9);
+    font-weight: bold;
+}
+    .btn-back {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: #8df1f8;
+        color: #000000;
+        border-radius: .5rem;
+        cursor: pointer;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Lottie Loader Custom Styles */
+    .lottie-loader-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        grid-column: 1 / -1;
+        padding: 2rem;
+    }
+
+    .lottie-box {
+        width: 350px;
+        height: 350px;
+    }
+
+    .lottie-loader-wrapper p {
+        font-size: 1.6rem;
+        color: #666;
+        margin-top: 1rem;
+    }
+    .video-display-box iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: .5rem;
+    border: 2px solid #00c3ff;
+    box-shadow: 0 0 15px #67e8ff, 0 0 30px rgba(86, 221, 255, 0.4);
+    background: #000;
+    transition: all 0.3s ease-in-out;
+}
+
+.video-display-box iframe:hover {
+    box-shadow: 0 0 20px #20b5f0, 0 0 40px rgba(95, 210, 255, 0.7);
+}
+   </style>
+</head>
+<body>
+
+<header class="header">
+   <section class="flex">
+      <a href="home.html" class="logo">NEXUS Platform</a>
+      <form action="search.html" method="post" class="search-form">
+         <input type="text" name="search_box" required placeholder="search courses..." maxlength="100">
+         <button type="submit" class="fas fa-search"></button>
+      </form>
+      <div class="icons">
+         <div id="menu-btn" class="fas fa-bars"></div>
+         <div id="search-btn" class="fas fa-search"></div>
+         <div id="user-btn" class="fas fa-user"></div>
+         <div id="toggle-btn" class="fas fa-sun"></div>
+      </div>
+      <div class="profile">
+         <img src="images/pic-1.jpg" id="header_avatar" class="image" alt="">
+         <h3 class="name" id="profile-name">Loading...</h3>
+         <p class="role">student</p>
+         <a href="profile.html" class="btn">view profile</a>
+         <div class="flex-btn">
+            <button class="option-btn" style="width:100%; border:0; cursor:pointer;" id="logout-btn">logout</button>
+         </div>
+      </div>
+   </section>
+</header>   
+
+<div class="side-bar">
+   <div id="close-btn"><i class="fas fa-times"></i></div>
+   <div class="profile">
+      <img src="images/pic-1.jpg" id="sidebar_avatar" class="image" alt="">
+      <h3 class="name" id="sidebar-name">Loading...</h3>
+      <p class="role">student</p>
+      <a href="profile.html" class="btn">view profile</a>
+   </div>
+   <nav class="navbar">
+      <a href="home.html"><i class="fas fa-home"></i><span>home</span></a>
+      <a href="about.html"><i class="fas fa-question"></i><span>about</span></a>
+      <a href="courses.html"><i class="fas fa-graduation-cap"></i><span>courses</span></a>
+      <a href="Live.html"><i class="fas fa-chalkboard-user"></i><span>Live</span></a>
+      <a href="contact.html"><i class="fas fa-headset"></i><span>contact us</span></a>
+   </nav>
+</div>
+
+<section class="courses">
+   <h1 class="heading">Chemistry Revision</h1>
+   <div class="box-container" id="lessons-container">
+      <!-- Loading Animation Placeholder -->
+      <div class="lottie-loader-wrapper">
+         <div id="main-lottie-loader" class="lottie-box"></div>
+         <p>Loading...</p>
+      </div>
+   </div>
+</section>
+
+<!-- Sub View Video Player Overlay -->
+<div id="single-page-video-view">
+    <div class="player-container">
+        <div class="btn-back" id="back-to-lessons-btn">
+            <i class="fas fa-arrow-left"></i> Back to Lessons
+        </div>
+
+        <h1 class="heading" id="subview-lesson-title">Loading Lesson Title...</h1>
+
+        <div class="video-display-box">
+            <iframe id="custom-main-player" src="" allowfullscreen></iframe>
+            <h3 class="heading" id="custom-video-title" style="margin-top: 1.5rem;">වීඩියෝව තෝරන්න</h3>
+        </div>
+
+        <h2 class="heading" style="margin-top: 2rem;">Lesson Parts</h2>
+        <div class="playlist-items" id="playlist-items-container">
+            <!-- Sub Loader Placeholder -->
+            <div class="lottie-loader-wrapper">
+                <div id="sub-lottie-loader" class="lottie-box"></div>
+                <p>Loading parts...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
+
+<!-- Lottie Web Player Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+<!-- Firebase Dynamic Integration -->
+<script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+   import { getFirestore, doc, getDoc, collection, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+   // Path to your external Lottie JSON File
+   const LOTTIE_FILE_PATH = 'loading.json';
+
+   // Load Main Lottie Animation via Path
+   const mainLoaderElem = document.getElementById('main-lottie-loader');
+   if(mainLoaderElem) {
+       lottie.loadAnimation({
+           container: mainLoaderElem,
+           renderer: 'svg',
+           loop: true,
+           autoplay: true,
+           path: LOTTIE_FILE_PATH
+       });
+   }
+
+   const firebaseConfig = {
+       apiKey: "AIzaSyCmciwmEbSDgA5PhCY12a_vKqXl4GDBeZ8",
+       authDomain: "school-project-5fe93.firebaseapp.com",
+       projectId: "school-project-5fe93",
+       storageBucket: "school-project-5fe93.firebasestorage.app",
+       messagingSenderId: "548925209782",
+       appId: "1:548925209782:web:cea0aac7d41a510b2fba17",
+       measurementId: "G-5MG8T54708"
+   };
+
+   const app = initializeApp(firebaseConfig);
+   const auth = getAuth(app);
+   const db = getFirestore(app);
+
+   const lessonsContainer = document.getElementById('lessons-container');
+   const singlePageVideoView = document.getElementById('single-page-video-view');
+   const playlistContainer = document.getElementById('playlist-items-container');
+   const mainPlayer = document.getElementById('custom-main-player');
+   const videoTitleDisplay = document.getElementById('custom-video-title');
+   const subviewLessonTitle = document.getElementById('subview-lesson-title');
+
+   // Update User Profile
+   const updateUI = (name, avatar) => {
+       if (name) {
+           const pName = document.getElementById('profile-name');
+           const sName = document.getElementById('sidebar-name');
+           if(pName) pName.innerText = name;
+           if(sName) sName.innerText = name;
+       }
+       if (avatar) {
+           const hAvatar = document.getElementById('header_avatar');
+           const sAvatar = document.getElementById('sidebar_avatar');
+           if(hAvatar) hAvatar.src = avatar;
+           if(sAvatar) sAvatar.src = avatar;
+       }
+   };
+
+   // Check Local Storage
+   const localName = localStorage.getItem('student_name');
+   const localAvatar = localStorage.getItem('student_avatar');
+   const studentId = localStorage.getItem('student_id');
+
+   if (localName || localAvatar) {
+       updateUI(localName, localAvatar);
+   }
+
+   // Session & Protection Check
+   onAuthStateChanged(auth, async (user) => {
+       if (user) {
+           let userDoc = await getDoc(doc(db, "students", user.uid));
+           if (!userDoc.exists()) {
+               userDoc = await getDoc(doc(db, "users", user.uid));
+           }
+
+           if (userDoc.exists()) {
+               const data = userDoc.data();
+               const name = data.fullName || data.name || user.displayName || "Student";
+               const avatar = data.avatar || "images/pic-1.jpg";
+
+               localStorage.setItem('student_name', name);
+               localStorage.setItem('student_avatar', avatar);
+               updateUI(name, avatar);
+           }
+       } else {
+           if (!studentId) {
+               window.location.href = 'login.html';
+           }
+       }
+   });
+
+   // 1. Get Chemistry Lessons Real-time
+   onSnapshot(collection(db, "chemistry_lessons"), (snapshot) => {
+       if (snapshot.empty) {
+           lessonsContainer.innerHTML = '<p style="font-size: 1.6rem; color: #666; width: 100%; text-align: center;">තවම පාඩම් එක් කර නොමැත.</p>';
+           return;
+       }
+
+       lessonsContainer.innerHTML = '';
+
+       snapshot.forEach((docSnap) => {
+           const lesson = docSnap.data();
+           const lessonId = docSnap.id;
+
+           const cardHTML = `
+               <div class="box" data-id="${lessonId}" tabindex="0">
+                  <div class="tutor">
+                     <img src="${lesson.tutorImg || 'images/n1.png'}" alt="">
+                     <div class="info">
+                        <h3>${lesson.tutorName || 'Amila Dasanayaka'}</h3>
+                        <span>${lesson.date || '20-08-2026'}</span>
+                     </div>
+                  </div>
+                  <div class="thumb">
+                     <img src="${lesson.thumb || 'images/T1.png'}" alt="">
+                     <span>${lesson.videoCount || '0 videos'}</span>
+                  </div>
+                  <h3 class="title">${lesson.title || 'Untitled Lesson'}</h3>
+                  <button class="inline-btn watch-btn" data-id="${lessonId}" data-title="${lesson.title}">Watch Lesson Parts</button>
+               </div>
+           `;
+           lessonsContainer.innerHTML += cardHTML;
+       });
+
+       document.querySelectorAll('.watch-btn').forEach(btn => {
+           btn.addEventListener('click', function() {
+               const lessonId = this.getAttribute('data-id');
+               const title = this.getAttribute('data-title');
+               openVideoSubView(lessonId, title);
+           });
+       });
+   });
+
+   // 2. Open Sub View for Videos
+   async function openVideoSubView(lessonId, title) {
+       subviewLessonTitle.innerText = title;
+       
+       // Show Loader in Sub View
+       playlistContainer.innerHTML = `
+           <div class="lottie-loader-wrapper">
+               <div id="sub-lottie-loader" class="lottie-box"></div>
+               <p>Loading parts...</p>
+           </div>
+       `;
+
+       const subLoaderElem = document.getElementById('sub-lottie-loader');
+       if(subLoaderElem) {
+           lottie.loadAnimation({
+               container: subLoaderElem,
+               renderer: 'svg',
+               loop: true,
+               autoplay: true,
+               path: LOTTIE_FILE_PATH
+           });
+       }
+       
+       singlePageVideoView.style.display = 'block';
+       document.body.style.overflow = 'hidden';
+
+       try {
+           const q = query(collection(db, "chemistry_lessons", lessonId, "parts"), orderBy("createdAt", "asc"));
+           const querySnapshot = await getDocs(q);
+
+           const parts = [];
+           querySnapshot.forEach((d) => parts.push({ id: d.id, ...d.data() }));
+
+           if (parts.length === 0) {
+               playlistContainer.innerHTML = '<p style="font-size:1.4rem; color: orange;">මේ පාඩමට අදාළ වීඩියෝ කොටස් හමු නොවීය.</p>';
+               mainPlayer.src = '';
+               videoTitleDisplay.innerText = 'No Video Available';
+               return;
+           }
+
+           renderPlaylist(parts);
+
+       } catch (err) {
+           playlistContainer.innerHTML = `<p style="font-size:1.4rem; color:red;">Error: ${err.message}</p>`;
+       }
+   }
+
+   // 3. Render Playlist
+   function renderPlaylist(parts) {
+       playlistContainer.innerHTML = '';
+
+       parts.forEach((part, index) => {
+           const item = document.createElement('div');
+           item.className = `playlist-card ${index === 0 ? 'active' : ''}`;
+           item.setAttribute('data-embed-id', part.embedId);
+           item.setAttribute('data-title', part.title);
+           item.innerHTML = `<i class="fas fa-play"></i> <span>${part.title}</span>`;
+
+           item.addEventListener('click', function() {
+               document.querySelectorAll('.playlist-card').forEach(el => el.classList.remove('active'));
+               this.classList.add('active');
+
+               const embedId = this.getAttribute('data-embed-id');
+               const pTitle = this.getAttribute('data-title');
+
+               mainPlayer.src = `https://www.youtube.com/embed/${embedId}?rel=0&autoplay=1`;
+               videoTitleDisplay.innerText = pTitle;
+           });
+
+           playlistContainer.appendChild(item);
+       });
+
+       mainPlayer.src = `https://www.youtube.com/embed/${parts[0].embedId}?rel=0`;
+       videoTitleDisplay.innerText = parts[0].title;
+   }
+
+   // Back Button Handler
+   document.getElementById('back-to-lessons-btn').addEventListener('click', () => {
+       singlePageVideoView.style.display = 'none';
+       document.body.style.overflow = 'auto';
+       mainPlayer.src = '';
+   });
+
+   // Logout Action
+   const logoutBtn = document.getElementById('logout-btn');
+   if(logoutBtn) {
+       logoutBtn.addEventListener('click', () => {
+           signOut(auth).then(() => {
+               localStorage.clear();
+               window.location.href = 'login.html';
+           }).catch(() => {
+               localStorage.clear();
+               window.location.href = 'login.html';
+           });
+       });
+   }
+</script>
+
+</body>
+</html>
